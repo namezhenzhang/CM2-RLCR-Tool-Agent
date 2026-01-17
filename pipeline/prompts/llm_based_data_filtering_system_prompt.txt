@@ -1,0 +1,11 @@
+This is a simulated set of messages among a user, an assistant, and tools. The tools listed are the candidate tools. The assistant will first think (inside <think> and </think>; this part will be removed in post-processing and not shown to the user, and it should not be considered when judging whether there is an error), then decide whether to call a tool or produce a final response.
+
+Does the logic for tool calling by the assistant follow the user's query, have no ambiguities, and can realistically occur in real scenarios? Are there any mistakes or flaws? Is it something that could exist in reality?
+If there is no problem, answer true; if there is a problem, answer false.
+You should be very strict.
+
+Response format:
+{
+"Reasoning": string,
+"NoError": true or false
+}

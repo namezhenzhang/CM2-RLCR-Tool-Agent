@@ -1,0 +1,39 @@
+# work dir: /run_cold_start
+
+### model
+model_name_or_path: ../models/Qwen/Qwen3-8B-Base-inittag
+trust_remote_code: true
+### method
+stage: sft
+do_train: true
+finetuning_type: full
+deepspeed: ../LLaMA-Factory/examples/deepspeed/ds_z3_config.json  # choices: [ds_z0_config.json, ds_z2_config.json, ds_z3_config.json]
+### dataset
+dataset: cold_start_data_cot_compressed_for_llamafactory
+dataset_dir: ../data/cold_start_data
+template: qwen3
+cutoff_len: 12000
+max_samples: 5000000
+overwrite_cache: true
+preprocessing_num_workers: 32
+dataloader_num_workers: 32
+### output
+output_dir: ../models/Qwen/checkpoint-cold_start-qwen3-8b-base-inittag-keepthink-lr1e-5-bs2-ga4-ep2-wr0.1-cut12000
+logging_steps: 1
+save_strategy: epoch
+plot_loss: true
+overwrite_output_dir: true
+save_only_model: True
+report_to: wandb  # choices: [none, wandb, tensorboard, swanlab, mlflow]
+run_name: sft/cold_start_qwen3-8b-base-inittag-keepthink-lr1e-5-bs2-ga4-ep2-wr0.1-cut12000
+### train
+mask_history: false
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 4
+learning_rate: 1.0e-5
+num_train_epochs: 2.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+bf16: true
+ddp_timeout: 180000000
+resume_from_checkpoint: null

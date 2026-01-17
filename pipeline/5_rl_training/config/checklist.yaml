@@ -1,0 +1,25 @@
+hydra:
+  searchpath:
+    - file://verl/trainer/config
+    - pkg://verl.trainer.config
+
+defaults:
+  - ppo_trainer
+  - _self_
+
+data:
+  max_prompt_length: 2048
+  max_response_length: 2048
+  train_batch_size: 256
+  return_raw_chat: True
+  return_multi_modal_inputs: False
+
+actor_rollout_ref:
+  hybrid_engine: True
+  rollout:
+    name: sglang
+    multi_turn:
+      enable: True
+      max_assistant_turns: 30
+      max_user_turns: 30
+      # tool_config_path: "./config/tool_config/gsm8k_tool_config.yaml"

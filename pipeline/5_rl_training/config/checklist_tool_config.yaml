@@ -1,0 +1,24 @@
+tools:
+  - class_name: verl.tools.mcp_checklist_tool.MCPChecklistTool
+    config:
+      rate_limit: 120
+      type: mcp
+      return_raw: true
+      max_concurrency: 100
+      dataset_path: ./data/rl/checklist_annotated_rl_selected_by_stats_forverl.json
+      sglang_url:
+        - http://127.0.0.1:10001/v1/chat/completions
+      sglang_model: Qwen/Qwen3-4B-Instruct-2507
+      temperature: 0.6
+      top_p: 0.8
+      max_new_tokens: 8000
+      max_tokens: 8000
+      retry_attempts: 1
+      semaphore_size: 500
+      timeout: 1200
+    mcp:
+      mcp_servers_config_path: ./run_rl/config/checklist_mcp_server.json
+      # optional
+      tool_selected_list: []
+
+

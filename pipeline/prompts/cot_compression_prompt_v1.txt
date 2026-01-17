@@ -1,0 +1,64 @@
+# Instruction
+You are given a multi-turn multi-step conversation consisting of messages. Each message has:
+- role: one of [system | user | assistant | tool]
+- content: textual content 
+- thinking (for assistant messages, there is a thinking section)
+- tool_call / tool_result
+
+# Task:
+For every assistant message that contains a thinking section, produce a concise rewritten thinking section that preserves all essential reasoning, decisions, constraints, and references needed to justify the reply, while removing verbosity, filler, repetitions, speculative or unneeded self-talk.
+
+# Important Requirements:
+1. Preserve Meaning: Do not change conclusions, assumptions, selected tools, or rationale ordering unless reordering improves clarity without altering logic.
+2. Keep Necessary Steps: Retain key logical steps, intermediate conditions, disambiguations, and any constraints that influence the final answer or tool choice.
+3. Do NOT invent new facts or reasoning not present in the original thinking.
+4. Do NOT shorten so aggressively that causal links or justification for tool calls become unclear.
+5. Maintain references to tool names, parameters, or required outputs if they affect the final answer.
+6. If the original thinking is already minimal, keep it (possibly with tiny clarity edits).
+7. If a thinking section is empty or missing, output one for that item.
+8. Output Format must be strict JSON as described below (no extra commentary).
+
+# Input JSON Schema (example):
+{
+  "tools": [
+    // tool schemas
+  ]
+  "messages": [
+    {
+      "role": "user",
+      "content": "...",
+      "tool_calls": []
+    },
+    {
+      "role": "assistant",
+      "content": {
+        "thinking": "Reason for choosing tool ...",
+        "reply": "(May be empty if just a tool call step)"
+      }
+      "tool_calls": [ ... ],
+    },
+    {
+      "role": "tool",
+      "content": "Tool result ...",
+      "tool_calls": []
+    },
+    {
+      "role": "assistant",
+      "content": {
+        "thinking": "LONG INTERNAL REASONING TEXT ...",
+        "reply": "Visible answer to user ..."
+      }
+    }
+  ]
+}
+
+# Output format:
+Return a JSON array aligned with assistant messages order. Each element corresponds to one assistant message.
+The total number should be the same.
+
+[
+  {
+    "thinking": "..."
+  },
+  ...
+]

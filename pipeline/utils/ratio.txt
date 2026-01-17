@@ -1,0 +1,38 @@
+
+# Hard-coded drop policy
+# Apply ratios from ALL metrics; when multiple apply, combine as: 1 - Π(1 - r_i)
+GLOBAL_DEFAULT_DROP_RATIO: float = 0.0  # when no mapping applies
+
+# Per-metric ratio mappings (keys are the metric values to drop and their ratios)
+
+DROP_RATIO_BY_MAX_ASSISTANT_STEPS: Dict[int, float] = {
+    1: 0.3,
+    2: 0.0
+}
+DROP_RATIO_BY_MAX_PARALLEL_TOOL_CALLS: Dict[int, float] = {
+    1: 0.0
+}
+DROP_RATIO_BY_NUM_ASSISTANT_MESSAGES: Dict[int, float] = {
+    1: 0.2,
+    2: 0.3
+}
+DROP_RATIO_BY_NUM_CANDIDATE_TOOLS: Dict[int, float] = {
+    1: 0.7,
+    2: 0.4,
+    3: 0.0,
+    6: 0.0,
+    10: 0.0
+}
+DROP_RATIO_BY_NUM_SELECTED_TOOLS: Dict[int, float] = {
+    1: 0.4
+}
+
+DROP_RATIO_BY_NUM_TURNS: Dict[int, float] = {
+    1: 0.4,
+    3: 0.0
+}
+DROP_RATIO_BY_TOOL_CALLS: Dict[int, float] = {
+    1: 0.3,
+    2: 0.3,
+    3: 0.0
+}

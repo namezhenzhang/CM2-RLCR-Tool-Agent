@@ -1,0 +1,18 @@
+{
+    "model": "gpt-5",
+    "requests": 1,
+    "input_tokens": 5080,
+    "cached_input_tokens": 0,
+    "non_cached_input_tokens": 5080,
+    "output_tokens": 12713,
+    "estimated_cost_usd": 0.13348,
+    "pricing_per_million": {
+        "input": 1.25,
+        "cached_input": 0.125,
+        "output": 10.0
+    },
+    "pricing_source": "auto_detected",
+    "progress_completed": 1,
+    "progress_total": 1,
+    "checkpoint": true
+}

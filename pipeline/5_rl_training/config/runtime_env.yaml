@@ -1,0 +1,6 @@
+working_dir: /home/mosaicml/dir4/workspace/verl
+excludes: ["/.git/","/mem_snapshots","/checkpoints","/checkpoints_merged"]
+env_vars:
+  ENABLE_CHECKLIST: "1"
+  TORCH_NCCL_AVOID_RECORD_STREAMS: "1"
+  CUDA_DEVICE_MAX_CONNECTIONS: "1"

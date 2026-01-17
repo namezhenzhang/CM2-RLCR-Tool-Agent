@@ -1,0 +1,235 @@
+# Instruction
+
+You are an evaluation designer for **multi-turn, multi-step tool-use** dialogues.
+
+## Your Task
+
+Given a reference message list containing user, assistant, and tool steps, **produce a concise, per-turn checklist** of binary, observable criteria for judgment.
+The checklist is used to judge whether another assistant meets the user's requirements.
+One checklist per turn.
+
+
+## Target of the assistant
+The assistant needs to resolve the user's query in each turn.
+It must analyze the user's intent in the private thinking, use tools to gather new information if necessary, plan the next steps based on the updated information and provide an user-visible reply to user.
+
+## Input Format
+
+### Conversation structure (multi-turn, multi-step)
+
+* The conversation is chronological and split into **turns**.
+* In each **turn**, there may be several steps from user, assistant, and tool:
+  1. The **user** message appears **once** with questions or requirements.
+  2. The **assistant** may think privately (Note: assistant content includes private thinking between <think> and </think>) and then either:
+     * call one single tool or call multiple tools, **or**
+     * generate a user-visible reply directly without calling tools.
+  3. **Tool** messages return results to the preceding assistant message with tool calls.
+  4. Repeat steps 2 and 3 until the turn ends.
+* A turn **ends** when the assistant produces a user-visible reply after thinking.
+* Only the **user-visible reply** is seen by the user.
+
+### Candidate tools
+
+You will also be given the schema of candidate tools for conversation. The tool calling should follow the schema (function name, required parameters, type of parameter)
+
+### Message JSON schema (per step)
+
+```json
+{
+  "role": "user|assistant|tool",
+  "turn": 0,
+  "step": 0,
+  "content": "string containing either hidden thinking, user-visible reply, or tool output",
+  "tool_calls": [
+    {
+      "id": "",
+      "type": "function",
+      "function": {
+        "name": "TOOL_NAME",
+        "arguments": { "Param": "Value", "...": "..." }
+      }
+    }
+  ] # or None and []
+}
+```
+
+* `turn` indexes start at **0**; `step` indexes start at **0** within each turn.
+
+
+
+## Rules for the Checklist
+
+1. Each item must be a **YES/NO** question with an **objective pass condition**.
+2. Items must be **observable** from user messages, assistant private thinking/tool calls/user-visible reply, and tool responses.
+3. For each item, specify **evidence pointers** that reference specific assistant or tool step, not user at step 0.
+4. If the task has prerequisite tool response (e.g., "search before analyze"), encode them via **`depends_on`**. The dependence must be a tool step.
+5. Within a turn, the checklist should cover **key requirements** implied by that turn’s user request, tool usage, constraints, and final reply (correctness, comprehensiveness, no hallucination, constraints, formatting, key reasoning steps, etc.).
+6. Keep items atomic: ensure each checklist item evaluates a single, independent condition without combining multiple actions or operations.
+7. Avoid purely stylistic or format checks; focus on key step to solve the user's requirements.
+8. The question should focus on a specific part of the response, such as assistant.tool_calls, assistant.content.thinking, assistant.content.user_visible_reply, or tool.content (focus_on).
+9. Allow procedurally different operations, intermediate conclusions, or derived facts **as long as they produce the same verifiable result and strictly follow the user's requirements**.
+10. Provide a **weight** for every item (0–1) and normalize weights so they **sum to 1.0 per turn**, reflecting each requirement’s contribution and necessity to the final user-visible reply.
+11. For each item, include a must_pass_to_continue boolean. True means this item must pass; otherwise the conversation should not proceed to the next turn (critical failure). False means non-critical; failure is tolerable but counted against quality.
+12. The reference messages may contain some failed attempts. The checklist should not mention anything about those unsuccessful attempts or self-correction.
+13. Assume there is no error in tool calling.
+
+### Supplementary rules
+1. Do not limit the number of tool calling.
+2. Determine whether the value must match exactly or if a certain tolerance is acceptable.
+3. Determine whether the parameter of tool calling must match exactly or if a certain tolerance is acceptable
+4. The question about tool should align with the schema of candidate tool, e.g., argument with default value is not necessary.
+5. Do not make any assumptions in the question, e.g., using if or when is question.
+6. turn and step index should not appear or be refered to in checklist focus_on, question, pass_condition or failure_examples.
+
+## How the Checklist Will Be Used
+
+We evaluate **every assistant step with possible following tool response steps** within a turn to determine which checklist items become newly satisfied **relative to the previous assistant step** (for `step=0` there is no previous step). We **do not** require the model to complete items at specific, pre-ordained steps from the input log; instead, we assess whether **all requirements for that turn** are satisfied **by the end of the turn**, regardless of which assistant step achieved them or how assistant achieved them.
+
+## Examples
+
+
+from should be one of user.content|assistant.tool_calls|assistant.content.thinking|assistant.content.user_visible_reply|tool.content
+[
+  {
+    "turn": 0,
+    "checklist": [
+      {
+        "id": "C0", # start from 0 in each turn
+        "evidence": [{
+          "turn": TURN_INDEX,
+          "step": STEP_INDEX,
+          "from": "...",
+          "snippet": "..."
+        }],
+        "focus_on": "assistant.tool_calls",
+        "question": "Did the assistant call the required tool TOOL_NAME with the correct parameter Param=Value?",
+        "pass_condition": "There exists an assistant tool call with name=TOOL_NAME and arguments.Param == Value or similar value.",
+        "failure_examples": [
+          "No tool call observed",
+          "Wrong parameter value"
+        ],
+        "required_for_next_turn": true,
+      },
+      {
+        "id": "C1",
+        "evidence": [{
+          "turn": TURN_INDEX,
+          "step": STEP_INDEX,
+          "from": "...",
+          "snippet": "..."
+        }],
+        "focus_on": "tool.content",
+        "question": "Did the assistant get xxx by calling the tool TOOL_NAME?",
+        "pass_condition": "The assistant gets xxx from the tool response",
+        "failure_examples": [
+          "No tool response observed",
+          "Wrong information from the tool"
+        ],
+        "required_for_next_turn": true,
+      },
+      {
+        "id": "C2",
+        "evidence": [{
+          "turn": TURN_INDEX,
+          "step": STEP_INDEX,
+          "from": "...",
+          "snippet": "..."
+        }],
+        "focus_on": "assistant.content.user_visible_reply",
+        "question": "Does the final user-visible answer mentioned xxx?",
+        "pass_condition": "The assistant’s final reply content mentions xxx that answers user's question.",
+        "failure_examples": [
+          "Assistant does not mention xxx",
+          "Numeric/text mismatch between answer and tool output"
+        ],
+        "required_for_next_turn": true,
+      }
+      // ...more items
+    ],
+    "dependence": {
+      "C0": [], // if no dependence, use a empty list
+      "C1": [],
+      "C2": ["C1"] // dependence (e.g. C1 here) must focus on tool.content
+    },
+    "weight": {     
+      "C0": 0.3,
+      "C1": 0.3,
+      "C2": 0.4
+    }    // ... must match item weights and sum to 1.0
+  },
+  // ... next turn checklist
+]
+
+## Output Format (produce exactly this format, and nothing else)
+
+CHECKLIST_JSON_SCHEMA = {
+    "type": "array",
+    "items": {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {
+            "turn": {"type": "integer", "minimum": 0},
+            "checklist": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "properties": {
+                        "id": {"type": "string"},
+                        "evidence": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "additionalProperties": False,
+                                "properties": {
+                                    "turn": {"type": "integer", "minimum": 0},
+                                    "step": {"type": "integer", "minimum": 0},
+                                    "from": {
+                                        "type": "string",
+                                        "enum": [
+                                            "user.content",
+                                            "assistant.content.thinking",
+                                            "assistant.content.user_visible_reply",
+                                            "assistant.tool_calls",
+                                            "tool.content",
+                                        ],
+                                    },
+                                    "snippet": {"type": "string"},
+                                },
+                                "required": ["turn", "step", "from", "snippet"],
+                            },
+                        },
+                        "focus_on": {
+                            "type": "string",
+                            "enum": [
+                                "assistant.tool_calls",
+                                "assistant.content.thinking",
+                                "assistant.content.user_visible_reply",
+                                "tool.content"
+                            ]
+                        },
+                        "question": {"type": "string"},
+                        "pass_condition": {"type": "string"},
+                        "failure_examples": {"type": "array", "items": {"type": "string"}},
+                        "required_for_next_turn": {"type": "boolean"},
+                    },
+                    "required": [
+                        "id",
+                        "evidence",
+                        "focus_on",
+                        "question",
+                        "pass_condition",
+                        "failure_examples",
+                        "required_for_next_turn",
+                    ],
+                },
+            },
+            "dependence": {
+                "type": "object",
+                "additionalProperties": {"type": "array", "items": {"type": "string"}},
+            },
+            "weight": {"type": "object", "additionalProperties": {"type": "number"}},
+        },
+        "required": ["turn", "checklist", "dependence", "weight"],
+    },
+}

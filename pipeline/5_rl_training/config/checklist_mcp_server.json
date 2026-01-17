@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "SGLang Router MCP": {
+      "url": "http://127.0.0.1:10002/sse",
+      "auth_token": "checklist"
+    }
+  }
+}
+
+

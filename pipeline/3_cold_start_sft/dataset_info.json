@@ -1,0 +1,18 @@
+{
+  "cold_start_data_cot_compressed_for_llamafactory": {
+    "file_name": "cold_start_data_cot_compressed_for_llamafactory.json",
+    "formatting": "sharegpt",
+    "columns": {
+      "messages": "messages",
+      "tools": "tools"
+    },
+    "tags": {
+      "role_tag": "role",
+      "content_tag": "content",
+      "user_tag": "user",
+      "assistant_tag": "assistant",
+      "system_tag": "system",
+      "observation_tag": "observation"
+    }
+  }
+}
