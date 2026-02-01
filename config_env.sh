@@ -1,11 +1,13 @@
-# 1. use docker (not tested)
+# 1. use docker
 docker create --runtime=nvidia --gpus all --net=host --shm-size="10g" --cap-add=SYS_ADMIN -v .:/workspace/ --name verl verlai/verl:sgl055.latest sleep infinity
 docker start verl
 docker exec -it verl bash
 cd /workspace
+python3 -m pip install --upgrade pip
+pip install mcp fastmcp
 
 # 1. create conda environment
-conda create -n verl python==3.12
+conda create -n verl python==3.11
 conda activate verl
 
 pip install --upgrade pip
@@ -17,7 +19,7 @@ pip install "flash_attn==2.6.3" --no-build-isolation
 
 # 2. clone verl v0.6.1 and apply modifications
 # If you directly use the verl_v0.6.1_checklist folder
-cp verl_v0.6.1_checklist verl
+cp -r verl_v0.6.1_checklist verl
 cd verl
 # If you want to use the latest verl (e.g., v0.7.0), you may need to resolve the version conflict, because the latest verl switches to Agentloop.
 git clone git@github.com:volcengine/verl.git
