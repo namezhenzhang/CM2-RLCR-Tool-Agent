@@ -1,4 +1,5 @@
 # work dir: pipeline
+cd pipeline
 
 # 1. Data Downloading
 # Login using e.g. `huggingface-cli login` to access this dataset
@@ -54,9 +55,9 @@ python 1_data_filtering/llm_based_data_filtering.py \
   --save-every 1000 \
   --max-retries 3 \
   --system-prompt-file prompts/llm_based_data_filtering_system_prompt.txt \
+  --n-samples 20 \
+  --seed 42
   # for testing
-  # --n-samples 20 \
-  # --seed 42
 
 OPENAI_API_KEY=<OPENAI_API_KEY> \
 python 1_data_filtering/llm_based_data_filtering.py \
@@ -160,7 +161,7 @@ python utils/data_distribution.py \
 
 # Split 8k Cold Start 
 python 2_cot_compression/split_cold_start_data.py \
-  --n_samples 8000 \
+  --n_samples 1 \
   --input ../data/llm_based_filtered_data/llm_based_filtered_final.json \
   --rl_output ../data/rl_data/rl_data.json \
   --cold_start_output ../data/cold_start_data/cold_start_data.json
@@ -214,8 +215,8 @@ python ../model_assets/init_tag.py \
 WANDB_API_KEY=<WANDB_API_KEY> \
 llamafactory-cli train run_cold_start/cold_start_qwen3-8b-base-inittag-keepthink.yaml
 
-# copy and replace the chat template for verl training
-cp ../model_assets/chat_template.json path/to/cold_start_model/chat_template.json
+# copy and replace the chat template after cold-started model for verl training
+cp ../model_assets/chat_template.json path/to/cold_started_model/chat_template.json
 
 
 # 5. Checklist Labeling
@@ -253,8 +254,8 @@ python 4_checklist_labeling/checklist_labeling_v3.py \
 
 # 6. RL Training
 
-# copy and replace the chat template for verl training
-cp ../model_assets/chat_template.json path/to/cold_start_model/chat_template.json
+# copy and replace the chat template after cold-started model for verl training
+cp ../model_assets/chat_template.json path/to/cold_started_model/chat_template.json
 
 # Convert data format for verl training
 python 5_rl_training/convert_checklist_for_verl.py \
