@@ -13,4 +13,4 @@ snapshot_download(repo_id=args.model_name,
 
 # hf download namezz/cold-start-qwen-8b-base-inittag-keepthink-lr1e-5-gpu4-bs2-ga8-ep2-wr0.1-cut12000 --local-dir ./models/namezz/cold-start-qwen-8b-base-inittag-keepthink-lr1e-5-gpu4-bs2-ga8-ep2-wr0.1-cut12000
 
-# hf download namezz/Checklist --local-dir ./data --token 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
+# hf download namezz/Checklist --local-dir ./data --token <hf_token>
