@@ -3,12 +3,6 @@
 ![Method](./figs/method.png)
 
 
-## Paper
-
-Paper link (overleaf): [https://www.overleaf.com/read/vkthvvppndkp#e05393](https://www.overleaf.com/read/vkthvvppndkp#e05393)
-
-[**📄 Read the Paper (PDF)**](./paper.pdf)
-
 ## 🚀 News
 *   **[2026-01-31]** We released the code and paper for CM2.
 
