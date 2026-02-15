@@ -49,12 +49,13 @@ Code for evaluation will be released soon.
 If you use this code, please cite our paper:
 
 ```bibtex
-@misc{zhang2026cm2,
-  title={CM2: Reinforcement Learning with Checklist Rewards for Multi-Turn and Multi-Step Agentic Tool Use},
-  author={Zhang, Zhen and Song, Kaiqiang and Wang, Xun and Hu, Yebowen and Yan, Weixiang and Zhao, Chenyang and Zou, Henry Peng and Deng, Haoyun and Indurthi, Sathish Reddy and Liu, Shujian and Ma, Simin and Wang, Xiaoyang and Wang, Xin Eric and Wang, Song},
-  year={2026},
-  howpublished={Preprint},
-  url={https://github.com/namezhenzhang/CM2-RLCR-Tool-Agent}
+@misc{zhang2026cm2reinforcementlearningchecklist,
+      title={CM2: Reinforcement Learning with Checklist Rewards for Multi-Turn and Multi-Step Agentic Tool Use}, 
+      author={Zhen Zhang and Kaiqiang Song and Xun Wang and Yebowen Hu and Weixiang Yan and Chenyang Zhao and Henry Peng Zou and Haoyun Deng and Sathish Reddy Indurthi and Shujian Liu and Simin Ma and Xiaoyang Wang and Xin Eric Wang and Song Wang},
+      year={2026},
+      eprint={2602.12268},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2602.12268}, 
 }
-
 ```
