@@ -4,6 +4,7 @@
 
 
 ## 🚀 News
+*   **[2026-04-20]** Data and cold-start model can be found in this Huggingface collection [https://huggingface.co/collections/namezz/checklist](https://huggingface.co/collections/namezz/checklist).
 *   **[2026-01-31]** We released the code and paper for CM2.
 
 
